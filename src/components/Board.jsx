@@ -16,7 +16,11 @@ export default function Board(props) {
 
   function renderSquare(i) {
     return (
-      <Square value={props.squares[i]} onClick={() => handleSquareClick(i)} />
+      <Square
+        winner={winner}
+        value={props.squares[i]}
+        onClick={() => handleSquareClick(i)}
+      />
     );
   }
 
