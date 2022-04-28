@@ -19,6 +19,7 @@ export default function Board(props) {
       <Square
         winner={winner}
         value={props.squares[i]}
+        squares={props.squares}
         onClick={() => handleSquareClick(i)}
       />
     );
