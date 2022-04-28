@@ -1,24 +1,23 @@
 import { useState, useEffect } from "react";
 import Square from "./Square";
 
-export default function Board() {
-  const [squares, setSquares] = useState(Array(9).fill(null));
-  const [xIsNext, setXIsNext] = useState(true);
-
+export default function Board(props) {
   function handleSquareClick(i) {
-    const squaresClone = squares.slice();
-    xIsNext ? (squaresClone[i] = "X") : (squaresClone[i] = "O");
-    setSquares(squaresClone);
-    setXIsNext(!xIsNext);
+    const squaresClone = props.squares.slice();
+    props.xIsNext ? (squaresClone[i] = "X") : (squaresClone[i] = "O");
+    props.setSquares(squaresClone);
+    props.setXIsNext(!props.xIsNext);
   }
 
   function handleRestart() {
-    setSquares(Array(9).fill(null));
-    setXIsNext(true);
+    props.setSquares(Array(9).fill(null));
+    props.setXIsNext(true);
   }
 
   function renderSquare(i) {
-    return <Square value={squares[i]} onClick={() => handleSquareClick(i)} />;
+    return (
+      <Square value={props.squares[i]} onClick={() => handleSquareClick(i)} />
+    );
   }
 
   function findWinner(squares) {
@@ -45,10 +44,10 @@ export default function Board() {
     }
     return null;
   }
-  const winner = findWinner(squares);
+  const winner = findWinner(props.squares);
   const status = winner
     ? `The Winner Is ${winner}`
-    : `Next Player: ${xIsNext ? "X" : "O"}`;
+    : `Next Player: ${props.xIsNext ? "X" : "O"}`;
 
   return (
     <div className="flex flex-col">
