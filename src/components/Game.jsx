@@ -16,6 +16,7 @@ export default function Game() {
 
   function changeDifficulty(e) {
     setDifficulty(e.target.value);
+    handleRestart();
   }
 
   function aiChoose() {
@@ -160,7 +161,7 @@ export default function Game() {
         <h1 className="text-4xl mb-4">{status}</h1>
         {winner && (
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+            className="bg-white hover:bg-gray-100 text-gray-500 font-semibold border border-gray-400 py-2 px-4 rounded mb-4 shadow"
             onClick={handleRestart}
           >
             Play Again
@@ -175,8 +176,11 @@ export default function Game() {
       <div
         className={`${
           winner ? "blur-sm" : ""
-        } border-2 border-black border-opacity-0 p-10 min-h-fit`}
+        } border-2 border-black border-opacity-0 p-10 min-h-fit max-w-xl flex flex-col justify-center items-center`}
       >
+        <h1 className="text-3xl underline text-center">
+          History - Hover to preview, Click to jump back
+        </h1>
         <ul>{moves}</ul>
       </div>
     </div>
