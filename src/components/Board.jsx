@@ -3,11 +3,13 @@ import Square from "./Square";
 
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
+  const [xIsNext, setXIsNext] = useState(true);
 
   function handleClick(i) {
     const squaresClone = squares.slice();
-    squaresClone[i] = "X";
+    xIsNext ? (squaresClone[i] = "X") : (squaresClone[i] = "Y");
     setSquares(squaresClone);
+    setXIsNext(!xIsNext);
   }
 
   function renderSquare(i) {
