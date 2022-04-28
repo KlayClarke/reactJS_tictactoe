@@ -51,10 +51,15 @@ export default function Board() {
     : `Next Player: ${xIsNext ? "X" : "O"}`;
 
   return (
-    <div className="">
-      <div className="text-4xl">{status}</div>
+    <div className="flex flex-col">
+      <div className="text-4xl flex justify-center items-center mb-4">
+        {status}
+      </div>
       {winner && (
-        <button className="button" onClick={handleRestart}>
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+          onClick={handleRestart}
+        >
           Play again
         </button>
       )}
