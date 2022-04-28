@@ -1,19 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Square from "./Square";
 
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
 
-  function handleClick(i) {
+  function handleSquareClick(i) {
     const squaresClone = squares.slice();
     xIsNext ? (squaresClone[i] = "X") : (squaresClone[i] = "O");
     setSquares(squaresClone);
     setXIsNext(!xIsNext);
   }
 
+  function handleRestart() {
+    setSquares(Array(9).fill(null));
+    setXIsNext(true);
+  }
+
   function renderSquare(i) {
-    return <Square value={squares[i]} onClick={() => handleClick(i)} />;
+    return <Square value={squares[i]} onClick={() => handleSquareClick(i)} />;
   }
 
   function findWinner(squares) {
@@ -48,6 +53,11 @@ export default function Board() {
   return (
     <div className="">
       <div className="text-4xl">{status}</div>
+      {winner && (
+        <button className="button" onClick={handleRestart}>
+          Play again
+        </button>
+      )}
       <div className="grid grid-cols-3 border-2 border-black">
         {renderSquare(0)}
         {renderSquare(1)}
