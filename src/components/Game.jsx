@@ -1,5 +1,8 @@
 import Board from "./Board";
 import { useEffect, useState } from "react";
+import JSConfetti from "js-confetti";
+
+const jsConfetti = new JSConfetti();
 
 export default function Game() {
   const [history, setHistory] = useState([
@@ -8,6 +11,12 @@ export default function Game() {
       xIsNext: true,
     },
   ]);
+  const [isDraw, setIsDraw] = useState(false);
+  const [difficulty, setDifficulty] = useState("easy");
+
+  function changeDifficulty(e) {
+    setDifficulty(e.target.value);
+  }
 
   function aiChoose() {
     const current = history[history.length - 1];
@@ -69,6 +78,12 @@ export default function Game() {
         squares[a] === squares[b] &&
         squares[a] === squares[c]
       ) {
+        if (squares[a] == "X") {
+          jsConfetti.addConfetti({
+            confettiRadius: 6,
+            confettiNumber: 1000,
+          });
+        }
         return squares[a];
       }
     }
@@ -78,9 +93,17 @@ export default function Game() {
   const current = history[history.length - 1];
 
   const winner = findWinner(current.squares);
-  const status = winner
-    ? `The Winner Is ${winner}`
-    : `Next Player: ${current.xIsNext ? "X" : "O"}`;
+
+  let status;
+
+  status =
+    winner && winner == "X"
+      ? "Congratulations -- You Win!"
+      : winner && winner == "O"
+      ? "You Lose! Sorry!"
+      : !winner
+      ? `Next Player: ${current.xIsNext ? "X" : "O"}`
+      : "";
 
   const moves = history.slice().map((step, move) => {
     const desc = move ? "Jump to move #" + move : "Jump to game start";
@@ -96,11 +119,44 @@ export default function Game() {
     );
   });
 
+  useEffect(() => {
+    console.log(difficulty);
+
+    let availableSpots = [];
+    for (let i = 0; i < current.squares.length; i++) {
+      if (current.squares[i] == null) {
+        availableSpots.push(i);
+      }
+    }
+    if (!availableSpots.length) {
+      setIsDraw(true);
+    }
+  });
+
   aiChoose();
 
   return (
     <div className="flex justify-center items-center gap-20">
       <div className="flex flex-col justify-center items-center min-h-screen">
+        <div className="inline-block relative w-64">
+          <select
+            onChange={changeDifficulty}
+            className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+          >
+            <option value="easy">Easy</option>
+            <option value="impossible">Impossible</option>
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg
+              className="fill-current h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+            >
+              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+            </svg>
+          </div>
+        </div>
+        <br />
         <h1 className="text-4xl mb-4">{status}</h1>
         {winner && (
           <button
