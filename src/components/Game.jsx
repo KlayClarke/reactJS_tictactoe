@@ -1,5 +1,5 @@
 import Board from "./Board";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Game() {
   const [history, setHistory] = useState([
@@ -9,13 +9,35 @@ export default function Game() {
     },
   ]);
 
+  function aiChoose() {
+    const current = history[history.length - 1];
+    if (!current.xIsNext && !winner) {
+      const squaresClone = current.squares.slice();
+      let availableSpots = [];
+      for (let i = 0; i < current.squares.length; i++) {
+        if (current.squares[i] == null) {
+          availableSpots.push(i);
+        }
+      }
+      const random = Math.floor(Math.random() * availableSpots.length);
+      setTimeout(() => {
+        squaresClone[availableSpots[random]] = "O";
+        setHistory(
+          history.concat([{ squares: squaresClone, xIsNext: !current.xIsNext }])
+        );
+      }, 1000);
+    }
+  }
+
   function handleSquareClick(i) {
     const current = history[history.length - 1];
-    const squaresClone = current.squares.slice();
-    current.xIsNext ? (squaresClone[i] = "X") : (squaresClone[i] = "O");
-    setHistory(
-      history.concat([{ squares: squaresClone, xIsNext: !current.xIsNext }])
-    );
+    if (current.xIsNext) {
+      const squaresClone = current.squares.slice();
+      squaresClone[i] = "X";
+      setHistory(
+        history.concat([{ squares: squaresClone, xIsNext: !current.xIsNext }])
+      );
+    }
   }
 
   function handleRestart() {
@@ -73,6 +95,8 @@ export default function Game() {
       </li>
     );
   });
+
+  aiChoose();
 
   return (
     <div className="flex justify-center items-center gap-20">
