@@ -13,7 +13,7 @@ export default function Board(props) {
 
   return (
     <div className="flex flex-col">
-      <div className="grid grid-cols-3 border-2 border-black">
+      <div className="grid grid-cols-3">
         {renderSquare(0)}
         {renderSquare(1)}
         {renderSquare(2)}
