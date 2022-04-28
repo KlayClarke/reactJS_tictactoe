@@ -7,7 +7,7 @@ export default function Board() {
 
   function handleClick(i) {
     const squaresClone = squares.slice();
-    xIsNext ? (squaresClone[i] = "X") : (squaresClone[i] = "Y");
+    xIsNext ? (squaresClone[i] = "X") : (squaresClone[i] = "O");
     setSquares(squaresClone);
     setXIsNext(!xIsNext);
   }
@@ -16,8 +16,11 @@ export default function Board() {
     return <Square value={squares[i]} onClick={() => handleClick(i)} />;
   }
 
+  const status = `Next Player: ${xIsNext ? "X" : "O"}`;
+
   return (
     <div className="">
+      <div className="text-4xl">{status}</div>
       <div className="grid grid-cols-3 border-2 border-black">
         {renderSquare(0)}
         {renderSquare(1)}
