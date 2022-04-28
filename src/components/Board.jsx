@@ -2,11 +2,6 @@ import { useState, useEffect } from "react";
 import Square from "./Square";
 
 export default function Board(props) {
-  // function handleRestart() {
-  //   props.setSquares(Array(9).fill(null));
-  //   props.setXIsNext(true);
-  // }
-
   function renderSquare(i) {
     return (
       <Square
