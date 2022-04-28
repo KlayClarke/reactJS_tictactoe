@@ -137,8 +137,8 @@ export default function Game() {
   aiChoose();
 
   return (
-    <div className="flex justify-center items-center gap-20">
-      <div className="flex flex-col justify-center items-center min-h-screen">
+    <div className="flex flex-col justify-center items-center min-h-screen mt-10 mb-10 lg:h-[1000px] lg:flex-row gap-10">
+      <div className="flex flex-col justify-center items-center">
         <div className="inline-block relative w-64">
           <select
             onChange={changeDifficulty}
@@ -176,11 +176,9 @@ export default function Game() {
       <div
         className={`${
           winner ? "blur-sm" : ""
-        } border-2 border-black border-opacity-0 p-10 min-h-fit max-w-xl flex flex-col justify-center items-center`}
+        } p-10 border border-gray-500 bg-gray-200 rounded-lg overflow-y-auto h-[450px]`}
       >
-        <h1 className="text-3xl underline text-center">
-          History - Hover to preview, Click to jump back
-        </h1>
+        <h1 className="text-3xl underline text-center">History</h1>
         <ul>{moves}</ul>
       </div>
     </div>
