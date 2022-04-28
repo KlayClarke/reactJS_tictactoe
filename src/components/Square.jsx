@@ -4,7 +4,7 @@ export default function Square(props) {
       className={`${
         props.winner ? "cursor-not-allowed" : ""
       } text-4xl border-2 border-black min-w-[200px] min-h-[200px]`}
-      onClick={() => props.onClick()}
+      onClick={props.winner || props.value ? undefined : () => props.onClick()}
     >
       {props.value}
     </button>

@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import Square from "./Square";
 
 export default function Board(props) {
@@ -7,6 +6,7 @@ export default function Board(props) {
       <Square
         onClick={() => props.handleSquareClick(i)}
         value={props.squares[i]}
+        winner={props.winner}
       />
     );
   }

@@ -1,5 +1,5 @@
 import Board from "./Board";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Game() {
   const [history, setHistory] = useState([
@@ -57,7 +57,7 @@ export default function Game() {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen">
-      <h1 className="mb-4">{status}</h1>
+      <h1 className="text-4xl mb-4">{status}</h1>
       {winner && (
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
@@ -66,7 +66,11 @@ export default function Game() {
           Play Again
         </button>
       )}
-      <Board squares={current.squares} handleSquareClick={handleSquareClick} />
+      <Board
+        squares={current.squares}
+        handleSquareClick={handleSquareClick}
+        winner={winner}
+      />
     </div>
   );
 }
