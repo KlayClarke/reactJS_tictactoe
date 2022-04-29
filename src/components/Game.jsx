@@ -12,6 +12,7 @@ export default function Game() {
     },
   ]);
   const [isDraw, setIsDraw] = useState(false);
+  const [isGameOver, setIsGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState("easy");
 
   function changeDifficulty(e) {
@@ -20,38 +21,69 @@ export default function Game() {
   }
 
   function aiChoose() {
-    const current = history[history.length - 1];
-    if (!current.xIsNext && !winner) {
+    if (!isGameOver) {
+      console.log("not game over");
+      const current = history[history.length - 1];
       const squaresClone = current.squares.slice();
       let availableSpots = [];
-      for (let i = 0; i < current.squares.length; i++) {
-        if (current.squares[i] == null) {
+      for (let i = 0; i < squaresClone.length; i++) {
+        if (squaresClone[i] === null) {
           availableSpots.push(i);
         }
       }
-      const random = Math.floor(Math.random() * availableSpots.length);
-      setTimeout(() => {
-        squaresClone[availableSpots[random]] = "O";
-        setHistory(
-          history.concat([{ squares: squaresClone, xIsNext: !current.xIsNext }])
-        );
-      }, 1000);
+      if (!availableSpots.length) {
+        setIsDraw(true);
+      }
+      if (!current.xIsNext) {
+        const lines = [
+          [0, 1, 2],
+          [3, 4, 5],
+          [6, 7, 8],
+          [0, 3, 6],
+          [1, 4, 7],
+          [2, 5, 8],
+          [0, 4, 8],
+          [2, 4, 6],
+        ];
+        const random = Math.floor(Math.random() * availableSpots.length);
+        let aiChoice;
+        for (let i = 0; i < lines.length; i++) {
+          const [a, b, c] = lines[i];
+          if (
+            (squaresClone[a] === "X" &&
+              squaresClone[b] === "X" &&
+              squaresClone[c] == null) ||
+            (squaresClone[a] === "O" &&
+              squaresClone[b] === "O" &&
+              squaresClone[c] == null)
+          ) {
+            aiChoice = c;
+          } else if (
+            (squaresClone[b] === "X" &&
+              squaresClone[c] === "X" &&
+              squaresClone[a] === null) ||
+            (squaresClone[b] === "O" &&
+              squaresClone[c] === "O" &&
+              squaresClone[a] == null)
+          ) {
+            aiChoice = a;
+          } else if (
+            (squaresClone[a] === "X" &&
+              squaresClone[c] === "X" &&
+              squaresClone[b] == null) ||
+            (squaresClone[a] === "O" &&
+              squaresClone[c] === "O" &&
+              squaresClone[b] == null)
+          ) {
+            aiChoice = b;
+          }
+        }
+        if (!aiChoice) {
+          aiChoice = availableSpots[random];
+        }
+        handleSquareClick(aiChoice, "O");
+      }
     }
-  }
-
-  function handleSquareClick(i) {
-    const current = history[history.length - 1];
-    if (current.xIsNext) {
-      const squaresClone = current.squares.slice();
-      squaresClone[i] = "X";
-      setHistory(
-        history.concat([{ squares: squaresClone, xIsNext: !current.xIsNext }])
-      );
-    }
-  }
-
-  function handleRestart() {
-    setHistory([{ squares: Array(9).fill(null), xIsNext: true }]);
   }
 
   function jumpTo(index) {
@@ -97,22 +129,38 @@ export default function Game() {
 
   let status;
 
-  status =
-    winner && winner == "X"
-      ? "Congratulations -- You Win!"
-      : winner && winner == "O"
-      ? "You Lose! Sorry!"
-      : !winner
-      ? `Next Player: ${current.xIsNext ? "X" : "O"}`
-      : "";
+  function handleSquareClick(i, symbol) {
+    const current = history[history.length - 1];
+    if (symbol === "O" && !current.xIsNext) {
+      setTimeout(() => {
+        const squaresClone = current.squares.slice();
+        squaresClone[i] = symbol;
+        setHistory(
+          history.concat([{ squares: squaresClone, xIsNext: !current.xIsNext }])
+        );
+      }, 1000);
+    } else if (current.xIsNext) {
+      const squaresClone = current.squares.slice();
+      squaresClone[i] = symbol;
+      setHistory(
+        history.concat([{ squares: squaresClone, xIsNext: !current.xIsNext }])
+      );
+    }
+  }
+
+  function handleRestart() {
+    setHistory([{ squares: Array(9).fill(null), xIsNext: true }]);
+    setIsDraw(false);
+    setIsGameOver(false);
+  }
 
   const moves = history.slice().map((step, move) => {
-    const desc = move ? "Jump to move #" + move : "Jump to game start";
+    const desc = move ? "Return To Move #" + move : "Clear Board";
     return (
       <li key={move}>
         <button
-          className={`${winner ? "cursor-not-allowed" : ""} text-3xl `}
-          onClick={winner ? undefined : () => jumpTo(move + 1)}
+          className={`${isGameOver ? "cursor-not-allowed" : ""} text-2xl `}
+          onClick={isGameOver ? undefined : () => jumpTo(move + 1)}
         >
           {desc}
         </button>
@@ -120,24 +168,28 @@ export default function Game() {
     );
   });
 
-  useEffect(() => {
-    console.log(difficulty);
+  status = isDraw
+    ? "Draw"
+    : winner && winner == "X"
+    ? "Congratulations -- You Win!"
+    : winner && winner == "O"
+    ? "You Lose! Sorry!"
+    : !winner
+    ? `Next Player: ${current.xIsNext ? "X" : "O"}`
+    : "";
 
-    let availableSpots = [];
-    for (let i = 0; i < current.squares.length; i++) {
-      if (current.squares[i] == null) {
-        availableSpots.push(i);
+  useEffect(() => {
+    if (winner || isDraw) {
+      setIsGameOver(true);
+    } else {
+      if (!current.xIsNext) {
+        aiChoose();
       }
     }
-    if (!availableSpots.length) {
-      setIsDraw(true);
-    }
-  });
-
-  aiChoose();
+  }, [current.xIsNext, winner, isGameOver, isDraw, aiChoose]);
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen mt-10 mb-10 lg:h-[1000px] lg:flex-row gap-10">
+    <div className="flex flex-col justify-center items-center min-h-screen lg:flex-row gap-10">
       <div className="flex flex-col justify-center items-center">
         <div className="inline-block relative w-64">
           <select
@@ -159,7 +211,7 @@ export default function Game() {
         </div>
         <br />
         <h1 className="text-4xl mb-4">{status}</h1>
-        {winner && (
+        {isGameOver && (
           <button
             className="bg-white hover:bg-gray-100 text-gray-500 font-semibold border border-gray-400 py-2 px-4 rounded mb-4 shadow"
             onClick={handleRestart}
@@ -170,16 +222,15 @@ export default function Game() {
         <Board
           squares={current.squares}
           handleSquareClick={handleSquareClick}
-          winner={winner}
+          isGameOver={isGameOver}
         />
       </div>
       <div
-        className={`${
-          winner ? "blur-sm" : ""
-        } p-10 border border-gray-500 bg-gray-200 rounded-lg overflow-y-auto h-[450px]`}
+        className={`${isGameOver ? "blur-sm" : ""} ${
+          difficulty == "impossible" ? "hidden" : undefined
+        } p-10 border-2 border-gray-400 bg-gray-200 w-[300px] rounded-lg overflow-y-auto lg:h-[450px] shadow`}
       >
-        <h1 className="text-3xl underline text-center">History</h1>
-        <ul>{moves}</ul>
+        <ol className="list-decimal">{moves}</ol>
       </div>
     </div>
   );
